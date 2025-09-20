@@ -1,5 +1,7 @@
 enum VirtusizeSize { small, medium, large, extraLarge }
 
+// Size category
+
 extension VirtusizeSizeLabel on VirtusizeSize {
   String get label {
     switch (this) {
