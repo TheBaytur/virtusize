@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-
 import '../recommendation.dart';
 import '../recommendation_calculator.dart';
 import '../size_category.dart';
+
+// UI/UX 
 
 class VirtusizeRecommendationView extends StatefulWidget {
   const VirtusizeRecommendationView({
