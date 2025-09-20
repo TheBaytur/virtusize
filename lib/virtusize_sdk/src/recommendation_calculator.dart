@@ -1,6 +1,8 @@
 import 'recommendation.dart';
 import 'size_category.dart';
 
+// Calculates size recommendations based on user data.
+
 class VirtusizeCalculator {
   const VirtusizeCalculator();
 
