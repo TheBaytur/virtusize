@@ -1,5 +1,7 @@
 import 'size_category.dart';
 
+// Represents a size recommendation based on user data.
+
 class VirtusizeRecommendation {
   VirtusizeRecommendation({
     required this.size,
