@@ -11,7 +11,7 @@ class VirtusizeCalculator {
     required double weightKg,
   }) {
     if (heightCm <= 0 || weightKg <= 0) {
-      throw ArgumentError('Height and weight must be greater than zero.');
+      throw ArgumentError('Height and weight must be greater than zero');
     }
 
     final bmi = _calculateBmi(heightCm: heightCm, weightKg: weightKg);
