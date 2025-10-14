@@ -97,7 +97,7 @@ class _VirtusizeRecommendationViewState
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _onSubmit,
-              child: const Text('Get Size Recommendation here'),
+              child: const Text('Get Size Recommendation here:'),
             ),
             if (_error != null) ...[
               const SizedBox(height: 12),
