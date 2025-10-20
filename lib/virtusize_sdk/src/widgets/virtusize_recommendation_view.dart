@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:virtusize/animated_effects.dart';
 import '../recommendation.dart';
 import '../recommendation_calculator.dart';
 import '../size_category.dart';
@@ -39,16 +41,51 @@ class _VirtusizeRecommendationViewState
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 400),
-        child: Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child:
-                  _result == null
-                      ? _buildForm(context)
-                      : _buildResult(context, _result!),
+        child: AnimatedGradientBackground(
+          colors: const [
+            Color(0xFF0EA5E9),
+            Color(0xFF6366F1),
+            Color(0xFFEC4899),
+            Color(0xFFF97316),
+          ],
+          borderRadius: BorderRadius.circular(28),
+          duration: const Duration(seconds: 14),
+          padding: const EdgeInsets.all(2),
+          child: Material(
+            color: Colors.transparent,
+            elevation: 12,
+            borderRadius: BorderRadius.circular(26),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(26),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.94),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  transitionBuilder: (child, animation) {
+                    final curved = CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutBack,
+                    );
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, 0.1),
+                          end: Offset.zero,
+                        ).animate(curved),
+                        child: ScaleTransition(scale: curved, child: child),
+                      ),
+                    );
+                  },
+                  child:
+                      _result == null
+                          ? _buildForm(context)
+                          : _buildResult(context, _result!),
+                ),
+              ),
             ),
           ),
         ),
@@ -68,42 +105,55 @@ class _VirtusizeRecommendationViewState
             Text(
               'Find Your Perfect Fit',
               style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            TextFormField(
-              controller: _heightController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          TextFormField(
+            controller: _heightController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              labelText: 'Height (cm)',
+              filled: true,
+              fillColor: Colors.black.withOpacity(0.04),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              decoration: const InputDecoration(
-                labelText: 'Height (cm)',
-                border: OutlineInputBorder(),
-              ),
-              validator: _validatePositiveNumber,
             ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _weightController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Weight (kg)',
-                border: OutlineInputBorder(),
-              ),
-              validator: _validatePositiveNumber,
+            validator: _validatePositiveNumber,
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _weightController,
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal: true,
             ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _onSubmit,
-              child: const Text('Get Size Recommendation here:'),
+            decoration: InputDecoration(
+              labelText: 'Weight (kg)',
+              filled: true,
+              fillColor: Colors.black.withOpacity(0.04),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
-            if (_error != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                _error!,
-                style: Theme.of(
+            validator: _validatePositiveNumber,
+          ),
+          const SizedBox(height: 24),
+          AnimatedActionButton(
+            onPressed: _onSubmit,
+            icon: const Icon(Icons.auto_awesome, color: Colors.white),
+            label: const Text('Get Size Recommendation'),
+            colors: const [
+              Color(0xFF34D399),
+              Color(0xFF60A5FA),
+              Color(0xFFF97316),
+              Color(0xFFEC4899),
+            ],
+          ),
+          if (_error != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _error!,
+              style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: Colors.red),
                 textAlign: TextAlign.center,
@@ -122,10 +172,19 @@ class _VirtusizeRecommendationViewState
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'Your Recommended Size: ${size.label}',
-          style: Theme.of(context).textTheme.titleMedium,
+        AnimatedGradientText(
+          text: 'Your Recommended Size: ${size.label}',
           textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+          colors: const [
+            Color(0xFF6366F1),
+            Color(0xFFF472B6),
+            Color(0xFFFBBF24),
+            Color(0xFF22D3EE),
+          ],
         ),
         const SizedBox(height: 12),
         Text(
@@ -148,7 +207,21 @@ class _VirtusizeRecommendationViewState
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 24),
-        OutlinedButton(onPressed: _reset, child: const Text('OK')),
+        AnimatedPulse(
+          child: OutlinedButton(
+            onPressed: _reset,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            child: const Text('OK'),
+          ),
+        ),
       ],
     );
   }
