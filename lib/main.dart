@@ -3,7 +3,7 @@ import 'package:virtusize/virtusize_sdk/virtusize_sdk.dart';
 
 import 'registration_page.dart';
 
-// 14.10
+// 20.10
 
 void main() {
   runApp(const VirtusizeDemoApp());
