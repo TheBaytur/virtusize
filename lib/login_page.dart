@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'animated_effects.dart';
 
-// Animated login page with email and password fields, validation, and a submit button.
-
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, required this.onLoginSuccess});
+
+  final VoidCallback onLoginSuccess;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -207,6 +207,12 @@ class _LoginPageState extends State<LoginPage> {
       const SnackBar(content: Text('Logged in successfully!')),
     );
 
-    Navigator.of(context).pop();
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+
+    if (!mounted) {
+      return;
+    }
+
+    widget.onLoginSuccess();
   }
 }

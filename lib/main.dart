@@ -3,6 +3,7 @@ import 'package:virtusize/virtusize_sdk/virtusize_sdk.dart';
 
 import 'animated_effects.dart';
 import 'login_page.dart';
+import 'splash_screen.dart';
 
 // 20.10
 
@@ -10,8 +11,27 @@ void main() {
   runApp(const VirtusizeDemoApp());
 }
 
-class VirtusizeDemoApp extends StatelessWidget {
+enum _AppStage { splash, login, home }
+
+class VirtusizeDemoApp extends StatefulWidget {
   const VirtusizeDemoApp({super.key});
+
+  @override
+  State<VirtusizeDemoApp> createState() => _VirtusizeDemoAppState();
+}
+
+class _VirtusizeDemoAppState extends State<VirtusizeDemoApp> {
+  _AppStage _stage = _AppStage.splash;
+
+  void _showLogin() {
+    if (!mounted) return;
+    setState(() => _stage = _AppStage.login);
+  }
+
+  void _showHome() {
+    if (!mounted) return;
+    setState(() => _stage = _AppStage.home);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +42,35 @@ class VirtusizeDemoApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
-      home: const VirtusizeDemoScreen(),
+      home: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 700),
+        transitionBuilder: (child, animation) {
+          final curved = CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+          return FadeTransition(
+            opacity: curved,
+            child: ScaleTransition(scale: Tween<double>(begin: 0.98, end: 1.0).animate(curved), child: child),
+          );
+        },
+        child: _buildStage(),
+      ),
     );
+  }
+
+  Widget _buildStage() {
+    switch (_stage) {
+      case _AppStage.splash:
+        return SplashScreen(
+          key: const ValueKey('splash'),
+          onFinished: _showLogin,
+        );
+      case _AppStage.login:
+        return LoginPage(
+          key: const ValueKey('login'),
+          onLoginSuccess: _showHome,
+        );
+      case _AppStage.home:
+        return const VirtusizeDemoScreen(key: ValueKey('home'));
+    }
   }
 }
 
@@ -74,31 +121,12 @@ class VirtusizeDemoScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  AnimatedActionButton(
-                    onPressed: () => _openLogin(context),
-                    icon: const Icon(Icons.login, color: Colors.white),
-                    label: const Text('Log In'),
-                    colors: const [
-                      Color(0xFF6366F1),
-                      Color(0xFFEC4899),
-                      Color(0xFFF97316),
-                      Color(0xFF22D3EE),
-                    ],
-                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  void _openLogin(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const LoginPage(),
       ),
     );
   }
