@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'animated_effects.dart';
@@ -17,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool _isSubmitting = false;
   bool _obscurePassword = true;
+  String? _authError;
 
   @override
   void initState() {
@@ -165,6 +168,17 @@ class _LoginPageState extends State<LoginPage> {
                             Color(0xFF34D399),
                           ],
                         ),
+                        if (_authError != null) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            _authError!,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: Colors.redAccent[200],
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                         const SizedBox(height: 16),
                         AnimatedPulse(
                           child: TextButton(
@@ -195,29 +209,76 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() {
       _isSubmitting = true;
+      _authError = null;
     });
 
-    // Simulate an async login call for demo purposes.
-    await Future<void>.delayed(const Duration(seconds: 1));
-
-    if (!mounted) {
+    if (Firebase.apps.isEmpty) {
+      const message = 'Firebase is not initialized yet. Please try again.';
+      if (mounted) {
+        setState(() {
+          _authError = message;
+          _isSubmitting = false;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text(message)));
+      }
       return;
     }
 
-    setState(() {
-      _isSubmitting = false;
-    });
+    try {
+      await FirebaseAuth.instance.signInAnonymously();
+      if (!mounted) {
+        return;
+      }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Logged in successfully!')),
-    );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Logged in successfully!')));
 
-    await Future<void>.delayed(const Duration(milliseconds: 600));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
 
-    if (!mounted) {
-      return;
+      if (!mounted) {
+        return;
+      }
+
+      widget.onLoginSuccess();
+    } on FirebaseAuthException catch (err) {
+      final message = err.message ?? 'Failed to authenticate with Firebase.';
+      if (mounted) {
+        setState(() {
+          _authError = message;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Firebase auth error: $message')),
+        );
+      }
+    } on FirebaseException catch (err) {
+      final message = err.message ?? 'Firebase is unavailable right now.';
+      if (mounted) {
+        setState(() {
+          _authError = message;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+    } catch (err) {
+      final message = 'Unexpected error: $err';
+      if (mounted) {
+        setState(() {
+          _authError = message;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
-
-    widget.onLoginSuccess();
   }
 }
