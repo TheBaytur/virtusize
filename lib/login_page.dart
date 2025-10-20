@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'animated_effects.dart';
 
+// Animated login page with email and password fields, validation, and a submit button.
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
