@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:virtusize/virtusize_sdk/virtusize_sdk.dart';
 
+import 'registration_page.dart';
+
 // 14.10
 
 void main() {
@@ -35,12 +37,26 @@ class VirtusizeDemoScreen extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: const [
-            _Header(),
-            SizedBox(height: 32),
-            Expanded(child: VirtusizeRecommendationView()),
+          children: [
+            const _Header(),
+            const SizedBox(height: 32),
+            const Expanded(child: VirtusizeRecommendationView()),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () => _openRegistration(context),
+              icon: const Icon(Icons.person_add_alt_1_outlined),
+              label: const Text('Create an Account'),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _openRegistration(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const RegistrationPage(),
       ),
     );
   }
