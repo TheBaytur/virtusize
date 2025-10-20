@@ -1,37 +1,30 @@
 import 'package:flutter/material.dart';
 
-// Registration Page for creating a new user account
-
-class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<RegistrationPage> createState() => _RegistrationPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   bool _isSubmitting = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Account'),
-      ),
+      appBar: AppBar(title: const Text('Log In')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
@@ -43,39 +36,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Get Started',
+                    'Welcome Back',
                     style: Theme.of(context).textTheme.headlineSmall,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Create an account to save your measurements and receive personalized recommendations.',
+                    'Log in with your email and password to view your personalized size recommendations.',
                     style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
-                    controller: _nameController,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      labelText: 'Full Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      if (value.trim().length < 2) {
-                        return 'Name needs to be at least 2 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
                     controller: _emailController,
-                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
@@ -95,37 +70,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordController,
-                    textInputAction: TextInputAction.next,
-                    obscureText: true,
-                    decoration: const InputDecoration(
+                    textInputAction: TextInputAction.done,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
                       labelText: 'Password',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a password';
+                        return 'Please enter your password';
                       }
                       if (value.length < 8) {
                         return 'Password must be at least 8 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    textInputAction: TextInputAction.done,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Confirm Password',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please confirm your password';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Passwords do not match';
                       }
                       return null;
                     },
@@ -145,9 +111,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Icon(Icons.person_add_alt_1_outlined),
-                      label: Text(_isSubmitting ? 'Creating Account...' : 'Sign Up'),
+                          : const Icon(Icons.login),
+                      label: Text(_isSubmitting ? 'Signing In...' : 'Log In'),
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: _isSubmitting ? null : () {},
+                    child: const Text('Forgot password?'),
                   ),
                 ],
               ),
@@ -168,7 +139,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       _isSubmitting = true;
     });
 
-    // Simulate a network call for demonstration purposes.
+    // Simulate an async login call for demo purposes.
     await Future<void>.delayed(const Duration(seconds: 1));
 
     if (!mounted) {
@@ -180,7 +151,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Account created successfully!')),
+      const SnackBar(content: Text('Logged in successfully!')),
     );
 
     Navigator.of(context).pop();
