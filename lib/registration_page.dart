@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// Registration Page for creating a new user account
+
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
 
