@@ -19,6 +19,13 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
 
   @override
+  void initState() {
+    super.initState();
+    _emailController.text = '123';
+    _passwordController.text = '123';
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -102,10 +109,8 @@ class _LoginPageState extends State<LoginPage> {
                             if (value == null || value.trim().isEmpty) {
                               return 'Please enter your email';
                             }
-                            final emailPattern =
-                                RegExp(r'^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$');
-                            if (!emailPattern.hasMatch(value.trim())) {
-                              return 'Enter a valid email address';
+                            if (value.trim() != '123') {
+                              return 'Email must be 123';
                             }
                             return null;
                           },
@@ -139,8 +144,8 @@ class _LoginPageState extends State<LoginPage> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
                             }
-                            if (value.length < 8) {
-                              return 'Password must be at least 8 characters';
+                            if (value != '123') {
+                              return 'Password must be 123';
                             }
                             return null;
                           },
